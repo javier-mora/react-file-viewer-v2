@@ -15,12 +15,14 @@ npm install --save react-file-viewer-v2
 ```tsx
 import React, { Component } from 'react'
 
-import MyComponent from 'react-file-viewer-v2'
-import 'react-file-viewer-v2/dist/index.css'
+import { FileViewer } from 'react-file-viewer-v2'
 
 class Example extends Component {
   render() {
-    return <MyComponent />
+    return <FileViewer
+      fileType="pdf"
+      filePath={pdf}
+    />
   }
 }
 ```
