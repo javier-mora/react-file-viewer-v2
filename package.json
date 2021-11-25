@@ -59,5 +59,10 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "mammoth": "^1.4.19",
+    "pdfjs-dist": "^2.10.377",
+    "react-visual-window": "0.0.7"
+  }
 }

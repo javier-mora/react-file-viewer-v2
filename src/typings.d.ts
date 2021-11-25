@@ -15,3 +15,5 @@ declare module '*.svg' {
   export default svgUrl;
   export { svgComponent as ReactComponent }
 }
+
+declare module 'pdfjs-dist/legacy/build/pdf.worker.entry';
