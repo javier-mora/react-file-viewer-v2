@@ -1,4 +1,6 @@
 import * as React from 'react'
+import { ReactComponent as ZoomIcon } from '../../../assets/zoom.svg'
+import { ReactComponent as ZoomOutIcon } from '../../../assets/zoom-out.svg'
 
 interface IPhotoViewerProps {
   filePath: string
@@ -69,7 +71,7 @@ export const PhotoViewer = ({
       }}
     >
       <div className='view-control' onClick={increaseZoom}>
-        <a
+        <div
           style={{
             cursor: 'default',
             width: '30px',
@@ -83,17 +85,23 @@ export const PhotoViewer = ({
             textAlign: 'center',
             transition: 'all 0.3s ease',
             zIndex: 1,
-            bottom: '90px',
-            right: '20px',
-            fontSize: '20px',
-            fontWeight: 'bold'
+            bottom: '80px',
+            right: '20px'
           }}
         >
-          +
-        </a>
+          <ZoomIcon
+            style={{
+              width: 20,
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)'
+            }}
+          />
+        </div>
       </div>
       <div className='view-control' onClick={reduceZoom}>
-        <a
+        <div
           style={{
             cursor: 'default',
             width: '30px',
@@ -108,13 +116,19 @@ export const PhotoViewer = ({
             transition: 'all 0.3s ease',
             zIndex: 1,
             bottom: '30px',
-            right: '20px',
-            fontSize: '20px',
-            fontWeight: 'bold'
+            right: '20px'
           }}
         >
-          -
-        </a>
+          <ZoomOutIcon
+            style={{
+              width: 20,
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)'
+            }}
+          />
+        </div>
       </div>
       <canvas ref={canvasRef} width='500' height='500' />
     </div>

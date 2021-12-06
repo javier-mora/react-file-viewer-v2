@@ -3,6 +3,8 @@ import pdfjsWorker from 'pdfjs-dist/legacy/build/pdf.worker.entry'
 import * as React from 'react'
 import VisualWindow from 'react-visual-window'
 import { PDFPage } from './PDFPage'
+import { ReactComponent as ZoomIcon } from '../../../assets/zoom.svg'
+import { ReactComponent as ZoomOutIcon } from '../../../assets/zoom-out.svg'
 
 interface IPDFViewerProps {
   filePath: string
@@ -28,10 +30,6 @@ export const PDFViewer = ({ filePath, width, height }: IPDFViewerProps) => {
     setZoom((prev) => prev + 1)
   }
 
-  const resetZoom = () => {
-    setZoom(0)
-  }
-
   React.useLayoutEffect(() => {
     const rContainerWidth = container.current?.offsetWidth || 0
     getDocument(filePath).promise.then((pdf) => {
@@ -55,7 +53,6 @@ export const PDFViewer = ({ filePath, width, height }: IPDFViewerProps) => {
   const Row = React.forwardRef<HTMLDivElement, { index: number }>(
     (props, ref) => {
       const { index } = props
-      console.log(index)
       return (
         <div ref={ref} key={index + 1}>
           <PDFPage
@@ -73,7 +70,7 @@ export const PDFViewer = ({ filePath, width, height }: IPDFViewerProps) => {
     <div style={{ margin: 'auto', width: '100%', height: '100%', padding: 5 }}>
       <div className='pdf-controlls-container'>
         <div className='view-control' onClick={increaseZoom}>
-          <a
+          <div
             style={{
               cursor: 'default',
               width: '30px',
@@ -87,20 +84,23 @@ export const PDFViewer = ({ filePath, width, height }: IPDFViewerProps) => {
               textAlign: 'center',
               transition: 'all 0.3s ease',
               zIndex: 1,
-              bottom: '90px',
-              right: '20px',
-              fontSize: '20px',
-              fontWeight: 'bold'
+              bottom: '80px',
+              right: '20px'
             }}
           >
-            +
-          </a>
-        </div>
-        <div className='view-control' onClick={resetZoom}>
-          <i className='zoom-reset' />
+            <ZoomIcon
+              style={{
+                width: 20,
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)'
+              }}
+            />
+          </div>
         </div>
         <div className='view-control' onClick={reduceZoom}>
-          <a
+          <div
             style={{
               cursor: 'default',
               width: '30px',
@@ -115,13 +115,19 @@ export const PDFViewer = ({ filePath, width, height }: IPDFViewerProps) => {
               transition: 'all 0.3s ease',
               zIndex: 1,
               bottom: '30px',
-              right: '20px',
-              fontSize: '20px',
-              fontWeight: 'bold'
+              right: '20px'
             }}
           >
-            -
-          </a>
+            <ZoomOutIcon
+              style={{
+                width: 20,
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)'
+              }}
+            />
+          </div>
         </div>
       </div>
       <div
@@ -131,7 +137,7 @@ export const PDFViewer = ({ filePath, width, height }: IPDFViewerProps) => {
           height: height,
           overflow: 'auto',
           display: 'flex',
-          flexDirection: 'column',
+          flexDirection: 'row',
           paddingLeft: 10
         }}
       >

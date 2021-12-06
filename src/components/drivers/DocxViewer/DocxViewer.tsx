@@ -20,6 +20,7 @@ export const DocxViewer = ({ filePath }: IDocxViewerProps) => {
             { includeDefaultStyleMap: true }
           )
           .then((result) => {
+            console.log(result)
             const docEl = document.createElement('div')
             docEl.innerHTML = result.value
             const doc = document.getElementById('docx')
@@ -38,7 +39,7 @@ export const DocxViewer = ({ filePath }: IDocxViewerProps) => {
     >
       <div
         style={{
-          padding: '30px',
+          padding: '40px',
           background: 'white',
           boxShadow: '0 3px 10px rgb(0 0 0 / 0.2)'
         }}

@@ -4,6 +4,7 @@ import { FileViewer } from 'react-file-viewer-v2'
 
 //import sampleHouse from './example_files/SampleHouse.wexbim'
 //import solarImage from './example_files/02-USVI-Solar.jpg'
+//import imag2 from './example_files/imag2.png'
 //import docx from './example_files/SampleSpec.docx'
 //import doc from './example_files/sample.doc'
 //import csv from './example_files/Total_Crime.csv'
@@ -22,7 +23,7 @@ const CustomErorrMessage = (
 );
 
 const App = () => {
-  return <div style={{ width: 700, height: 500 }}>
+  return <div style={{ width: 900, height: 700 }}>
     <FileViewer
       fileType="pdf"
       filePath={pdf}

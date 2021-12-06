@@ -3,7 +3,6 @@ import {
   PDFPageProxy
 } from 'pdfjs-dist/types/src/display/api'
 import * as React from 'react'
-import './styles.module.css'
 
 interface IPDFPageProps {
   pdf: PDFDocumentProxy
