@@ -1,0 +1,10 @@
+.pgContainer {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+}
+.pgViewer {
+    height: 100%; 
+    position: relative;
+    flex-grow: 2;
+}
