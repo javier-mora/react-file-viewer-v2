@@ -26,7 +26,7 @@ There is one main React component, `FileViewer`, that takes the following props:
 formats, eg `'png'`). Passing in an unsupported file type will result in displaying
 an `unsupported file type` message (or a custom component).
 
-`filePath` string: the url of the resource to be shown by the FileViewer.
+`file` blob: Blob of the resource to be shown by the FileViewer.
 
 `unsupportedComponent` react element [optional]: A component to render in case
 the file format is not supported.
@@ -39,10 +39,21 @@ import { FileViewer } from 'react-file-viewer-v2'
 class Example extends Component {
   render() {
     return <FileViewer
+      file={pdf}
       fileType="pdf"
-      filePath={pdf}
     />
   }
+}
+```
+
+### Problems with react 17
+If you are on React v17, you may receive an error like below: `Module not found: Error: Can't resolve 'react/jsx-runtime' in '\node_modules\react-file-viewer-v2\dist\components\FileViewer' Did you mean 'jsx-runtime.js'?` You can resolve this by modifying your webpack config as below:
+
+```javascript
+config.resolve.alias= {
+  ...config.resolve.alias,
+  "react/jsx-dev-runtime": "react/jsx-dev-runtime.js",
+  "react/jsx-runtime": "react/jsx-runtime.js"
 }
 ```
 
