@@ -20,6 +20,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "lib"],
+  "include": ["src", "lib", "./node_modules/canvas-datagrid/dist/canvas-datagrid.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

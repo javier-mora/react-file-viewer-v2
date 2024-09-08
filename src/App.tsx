@@ -17,6 +17,7 @@ function App() {
         {file !== null && (<FileViewer 
             file={file!}
             fileType={fileType}
+            omit={['xlsx']}
           />
         )}
       </div>

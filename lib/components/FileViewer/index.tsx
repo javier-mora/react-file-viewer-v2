@@ -14,12 +14,14 @@ interface IFileViewer {
   file: Blob;
   fileType: string;
   unsupportedComponent?: JSX.Element;
+  omit?: string[];
 }
 
 export const FileViewer = ({
   file,
   fileType,
-  unsupportedComponent
+  unsupportedComponent,
+  omit,
 }: IFileViewer) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [dataUri, setDataUri] = React.useState<string>('');
@@ -48,26 +50,46 @@ export const FileViewer = ({
     reader.readAsDataURL(file);
   }, [file]);
 
-  const Driver = (props: { fileType: string, filePath: string, fileBlob: Blob, width: number | string, height: number | string }) => {
+  const Driver = (props: { fileType: string, filePath: string, fileBlob: Blob, width: number | string, height: number | string, omit: string[] }) => {
     switch (fileType) {
       case 'jpg':
       case 'gif':
       case 'bmp':
       case 'png': {
-        return <PhotoViewer {...props} />
+        if (props.omit.includes('jpg') || props.omit.includes('gif') || props.omit.includes('bmp') || props.omit.includes('png')) {
+          return unsupportedComponent ?? <UnsupportedViewer />
+        } else {
+          return <PhotoViewer {...props} />
+        }
       }
       case 'pdf': {
-        return <PdfViewer {...props} />
+        if (props.omit.includes('pdf')) {
+          return unsupportedComponent ?? <UnsupportedViewer />
+        } else {
+          return <PdfViewer {...props} />
+        }
       }
       case 'docx': {
-        return <DocxViewer {...props} />
+        if (props.omit.includes('docx')) {
+          return unsupportedComponent ?? <UnsupportedViewer />
+        } else {
+          return <DocxViewer {...props} /> 
+        }
       }
       case 'xlsx': {
-        return <XlsxViewer {...props} />
+        if (props.omit.includes('xlsx')) {
+          return unsupportedComponent ?? <UnsupportedViewer />
+        } else {
+          return <XlsxViewer {...props} />  
+        }
       }
       case 'webm':
       case 'mp4': {
-        return <VideoViewer {...props} />
+        if (props.omit.includes('webm') || props.omit.includes('mp4')) {
+          return unsupportedComponent ?? <UnsupportedViewer />
+        } else {
+          return <VideoViewer {...props} /> 
+        }
       }
       case 'pptx':
       default: {
@@ -92,6 +114,7 @@ export const FileViewer = ({
             fileType={fileType}
             width={measure.width}
             height={measure.height}
+            omit={omit ?? []}
           />
         )}
       </div>
