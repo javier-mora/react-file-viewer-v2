@@ -17,6 +17,7 @@ npm install --save react-file-viewer-v2
  - Images: png, jpeg, gif
  - pdf
  - docx
+ - xlsx
  - Video: mp4, webm
  - Audio: mp3
 ## Usage

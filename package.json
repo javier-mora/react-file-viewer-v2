@@ -1,7 +1,7 @@
 {
   "name": "react-file-viewer-v2",
   "private": false,
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Extendable file viewer for web",
   "author": "javier-mora",
   "license": "MIT",
@@ -44,8 +44,8 @@
     "vite-plugin-lib-inject-css": "^2.0.1"
   },
   "dependencies": {
-    "canvas-datagrid": "^0.4.7",
-    "docx-preview": "^0.3.0",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+    "docx-preview": "^0.3.3",
+    "jspreadsheet-ce": "^4.15.0",
+    "xlsx-to-js": "^1.0.2"
   }
 }

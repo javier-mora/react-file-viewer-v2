@@ -13,11 +13,11 @@ function App() {
           setFile(event?.target?.files ? event?.target?.files[0] : null);
         }}
       />
-      <div style={{ height: '700px' }}>
+      <div style={{ height: '400px' }}>
         {file !== null && (<FileViewer 
             file={file!}
             fileType={fileType}
-            omit={['xlsx']}
+            omit={['xls']}
           />
         )}
       </div>
