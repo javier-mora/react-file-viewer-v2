@@ -3,6 +3,7 @@ import jspreadsheet from "jspreadsheet-ce";
 import { getRangeDetails, WorkSheet, XlsxParser } from "xlsx-to-js";
 
 import '../../../../node_modules/jspreadsheet-ce/dist/jspreadsheet.css';
+import { calculateDisplaySize, createImageElement, createTextElement, insertElementInCell } from "./utils";
 
 interface IXlsxViewerProps {
     fileBlob: Blob;
@@ -25,8 +26,8 @@ export const XlsxViewer = (props: IXlsxViewerProps) => {
             setIsLoading(true);
             const file = await props.fileBlob.arrayBuffer();
             const xlsxParser = new XlsxParser();
-            const result = await xlsxParser.readFile(file, { dense: true, styles: true });
-            
+            const result = await xlsxParser.readFile(file, { dense: true, styles: true, drawings: true, skipHiddenRows: true });
+
             setGridData({
                 worksheets: result.workSheets,
                 grid: result.workSheets[selectedSheet].data.map(x => x.map(y => y.value)),
@@ -46,6 +47,10 @@ export const XlsxViewer = (props: IXlsxViewerProps) => {
                     // Tabla
                     const nroRows = gridData.worksheets[selectedSheet].data.length;
                     const nroCols = gridData.worksheets[selectedSheet].data.reduce((p, a) => a.length > p ? a.length : p, 0);
+                    const maxDrawingWidth =gridData.worksheets[selectedSheet].drawings.reduce((p, a) => {
+                        const s = calculateDisplaySize(a.position).width;
+                        return s > p ? s : p;
+                    }, 0);
 
                     jspreadsheet(currentRef, {
                         data: gridData.grid, 
@@ -120,7 +125,12 @@ export const XlsxViewer = (props: IXlsxViewerProps) => {
                             if (gridData.worksheets[selectedSheet].columnStyles.length === 0) {
                                 // Ancho de columna
                                 for(let i=0; i<nroCols; i++) {
-                                    (currentRef as jspreadsheet.JspreadsheetInstanceElement).jexcel.setWidth(i, gridData.worksheets[selectedSheet].defaultColWidth*8);
+                                    const defColWidth = gridData.worksheets[selectedSheet].defaultColWidth*8;
+                                    if (i < nroCols - 1) {
+                                        (currentRef as jspreadsheet.JspreadsheetInstanceElement).jexcel.setWidth(i, defColWidth);
+                                    } else {
+                                        (currentRef as jspreadsheet.JspreadsheetInstanceElement).jexcel.setWidth(i, defColWidth > maxDrawingWidth ? defColWidth : maxDrawingWidth);
+                                    }
                                 }
                             }
                             if (gridData.worksheets[selectedSheet].rowStyles.length === 0) {
@@ -135,7 +145,7 @@ export const XlsxViewer = (props: IXlsxViewerProps) => {
                                 for(let i=col.min; i<=col.max ;i++) {
                                     if (i <= nroCols) {
                                         // Ancho de columna
-                                        (currentRef as jspreadsheet.JspreadsheetInstanceElement).jexcel.setWidth(i-1, col.width*8);
+                                        (currentRef as jspreadsheet.JspreadsheetInstanceElement).jexcel.setWidth(i-1, i < nroCols ? col.width*8 : maxDrawingWidth);
                                         // Si se debe ocultar
                                         if (col.collapsed || col.hidden) {
                                             (currentRef as jspreadsheet.JspreadsheetInstanceElement).jexcel.hideColumn(i-1);
@@ -148,6 +158,33 @@ export const XlsxViewer = (props: IXlsxViewerProps) => {
                             gridData.worksheets[selectedSheet].mergeCells.forEach(r => {
                                 const rDetail = getRangeDetails(r);
                                 (currentRef as jspreadsheet.JspreadsheetInstanceElement).jexcel.setMerge(rDetail.origin, rDetail.colspan, rDetail.rowspan);
+                            });
+
+                            // Add drawings
+                            gridData.worksheets[selectedSheet].drawings.forEach(r => {
+                                switch(r.type) {
+                                    case 'image':
+                                        insertElementInCell(
+                                            (currentRef as jspreadsheet.JspreadsheetInstanceElement), 
+                                            r.position, 
+                                            createImageElement(r.base64, calculateDisplaySize(r.position))
+                                        );
+                                        break;
+                                    case 'textbox':
+                                        insertElementInCell(
+                                            (currentRef as jspreadsheet.JspreadsheetInstanceElement), 
+                                            r.position, 
+                                            createTextElement(r.properties?.['text'] ?? '', r.properties?.['size'] ?? 12, {})
+                                        );
+                                        break;
+                                    /*case 'shape':
+                                        insertElementInCell(
+                                            (currentRef as jspreadsheet.JspreadsheetInstanceElement), 
+                                            r.position, 
+                                            createShapeElement(r.properties?.['size'] ?? 12, {})
+                                        );
+                                        break;*/
+                                }
                             });
 
                             setIsLoading(false);
