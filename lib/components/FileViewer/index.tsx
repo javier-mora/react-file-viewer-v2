@@ -5,7 +5,8 @@ import {
   DocxViewer,
   XlsxViewer,
   VideoViewer,
-  UnsupportedViewer
+  UnsupportedViewer,
+  PptxViewer
 } from '../drivers';
 import styles from './styles.module.css'
 import { Error, Loading } from '../ui';
@@ -92,6 +93,11 @@ export const FileViewer = ({
         }
       }
       case 'pptx':
+        if (props.omit.includes('pptx')) {
+          return unsupportedComponent ?? <UnsupportedViewer />
+        } else {
+          return <PptxViewer {...props} />  
+        }
       default: {
         return unsupportedComponent ?? <UnsupportedViewer />
       }
