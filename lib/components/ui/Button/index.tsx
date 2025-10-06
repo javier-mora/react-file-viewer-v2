@@ -8,7 +8,12 @@ interface IButtonProps {
 
 export const Button = (props: IButtonProps) => {
     return (
-        <button className={styles.button} onClick={props.onClick}>
+        <button className={styles.button} onClick={(o) => {
+            o?.preventDefault();
+            if (props.onClick) props.onClick();
+        }} 
+        type='button'
+        >
             {props.icon}{props.label}
         </button>   
     );

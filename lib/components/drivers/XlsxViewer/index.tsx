@@ -61,7 +61,10 @@ export const XlsxViewer = (props: IXlsxViewerProps) => {
             const btn = document.createElement("button");
             btn.className = styles.tab;
             btn.textContent = ws.name || `Sheet ${i + 1}`;
-            btn.addEventListener("click", () => renderSheet(i));
+            btn.addEventListener("click", (e) => {
+                e?.preventDefault();
+                renderSheet(i);
+            });
             tabsEl.appendChild(btn);
         });
 
