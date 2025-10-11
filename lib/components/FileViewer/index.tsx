@@ -41,14 +41,17 @@ export const FileViewer = ({
 
   React.useEffect(() => {
     setIsLoading(true);
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      if (!(event?.target?.result instanceof ArrayBuffer)) {
-        setDataUri(event?.target?.result ?? '');
+    const url = URL.createObjectURL(file);
+    setDataUri(url);
+    setIsLoading(false);
+    return () => {
+      try {
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.warn('react-file-viewer-v2: failed to revokeObjectURL', err);
       }
-      setIsLoading(false);
     };
-    reader.readAsDataURL(file);
   }, [file]);
 
   const Driver = (props: { fileType: string, filePath: string, fileBlob: Blob, width: number | string, height: number | string, omit: string[] }) => {

@@ -1,7 +1,7 @@
 {
   "name": "react-file-viewer-v2",
   "private": false,
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "Extendable file viewer for web",
   "author": "javier-mora",
   "license": "MIT",
