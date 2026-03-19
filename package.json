@@ -1,11 +1,16 @@
 {
   "name": "react-file-viewer-v2",
   "private": false,
-  "version": "2.0.8",
+  "version": "2.2.0",
   "description": "Extendable file viewer for web",
   "author": "javier-mora",
   "license": "MIT",
   "type": "module",
+  "homepage": "https://javier-mora.github.io/react-file-viewer-v2/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/javier-mora/react-file-viewer-v2.git"
+  },
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "files": [
@@ -22,30 +27,28 @@
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react": "^17.0.2 || ^18.0.0 || ^19.0.0",
+    "react-dom": "^17.0.2 || ^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.12.7",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
-    "@typescript-eslint/eslint-plugin": "^7.2.0",
-    "@typescript-eslint/parser": "^7.2.0",
-    "@vitejs/plugin-react-swc": "^3.5.0",
-    "eslint": "^8.57.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.6",
-    "glob": "^10.3.12",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "typescript": "^5.2.2",
-    "vite": "^5.2.0",
-    "vite-plugin-dts": "^3.8.3",
-    "vite-plugin-lib-inject-css": "^2.0.1"
+    "@types/node": "^20.19.37",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.26",
+    "glob": "^10.5.0",
+    "typescript": "^5.9.3",
+    "vite": "8.0.1",
+    "vite-plugin-dts": "4.5.4",
+    "vite-plugin-lib-inject-css": "^2.2.2",
+    "@vitejs/plugin-react": "6.0.1"
   },
   "dependencies": {
-    "@jvmr/pptx-to-html": "^1.0.0",
+    "@jvmr/pptx-to-html": "1.0.1",
     "docx-preview": "^0.3.7",
-    "xlsx-to-js": "^1.0.4"
+    "xlsx-to-js": "1.0.5"
   }
 }
