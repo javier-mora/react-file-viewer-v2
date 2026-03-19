@@ -1,0 +1,161 @@
+import { Canvas, Meta } from "@storybook/addon-docs/blocks";
+import * as FileViewerStories from "./file-viewer.stories";
+
+<Meta title="Overview" />
+
+# react-file-viewer-v2
+
+- [Overview](#overview)
+- [Live examples](#live-examples)
+- [Component API](#component-api)
+- [Implementation](#implementation)
+
+## Overview
+
+`react-file-viewer-v2` is a browser-first file preview component for React applications.
+It accepts a `Blob`, resolves the requested viewer from `fileType`, and renders a focused preview surface for images, PDF files, Office documents, videos, and custom unsupported states.
+
+The examples below are intentionally compact.
+They are designed to validate the real integration flow instead of presenting a marketing page inside Storybook docs.
+
+## Live examples
+
+### Interactive preview
+
+Use the built-in image, PDF, or Office samples, then upload a local file to exercise the same API used by a real app.
+
+<Canvas of={FileViewerStories.InteractivePreview} />
+
+### PDF sample
+
+This story renders a generated PDF file through the same `FileViewer` entry point used by consumers.
+
+<Canvas of={FileViewerStories.PdfSample} />
+
+### Office document samples
+
+These stories use real bundled `xlsx`, `docx`, and `pptx` files so the corresponding drivers run through the same public API as production integrations.
+
+<Canvas of={FileViewerStories.XlsxSample} />
+
+<Canvas of={FileViewerStories.DocxSample} />
+
+<Canvas of={FileViewerStories.PptxSample} />
+
+### Custom fallback
+
+When a file type is disabled, you can provide your own React element instead of the default unsupported state.
+
+<Canvas of={FileViewerStories.CustomFallback} />
+
+## Component API
+
+### `FileViewer`
+
+`FileViewer` is the main public component exported by the package.
+
+### Props
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Default</th>
+      <th>Control</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>file</code></td>
+      <td>The browser <code>Blob</code>, <code>File</code>, or generated binary source that should be previewed.</td>
+      <td>None</td>
+      <td>Not exposed</td>
+    </tr>
+    <tr>
+      <td><code>fileType</code></td>
+      <td>Selects the built-in viewer driver, for example <code>pdf</code>, <code>png</code>, <code>docx</code>, <code>xlsx</code>, <code>pptx</code>, <code>mp4</code>, or <code>webm</code>.</td>
+      <td>None</td>
+      <td>Not exposed</td>
+    </tr>
+    <tr>
+      <td><code>unsupportedComponent</code></td>
+      <td>Replaces the default unsupported state with a product-specific fallback element.</td>
+      <td>Built-in unsupported viewer</td>
+      <td>Not exposed</td>
+    </tr>
+    <tr>
+      <td><code>omit</code></td>
+      <td>Disables one or more built-in drivers while keeping the same top-level API.</td>
+      <td><code>[]</code></td>
+      <td><code>object</code></td>
+    </tr>
+    <tr>
+      <td><code>theme</code></td>
+      <td>Controls the viewer toolbar appearance for supported drivers. Use <code>auto</code> to follow the user's preferred color scheme.</td>
+      <td><code>auto</code></td>
+      <td><code>inline-radio</code></td>
+    </tr>
+  </tbody>
+</table>
+
+## Implementation
+
+### Load a bundled sample
+
+```tsx
+import { useState } from "react";
+import { FileViewer } from "react-file-viewer-v2";
+
+const sample = new Blob(["..."], { type: "application/pdf" });
+
+export function BundledPreview() {
+  return <FileViewer file={sample} fileType="pdf" />;
+}
+```
+
+### Preview an uploaded file
+
+```tsx
+import { useState } from "react";
+import { FileViewer } from "react-file-viewer-v2";
+
+export function UploadPreview() {
+  const [file, setFile] = useState<File | null>(null);
+  const [fileType, setFileType] = useState("");
+
+  return (
+    <>
+      <input
+        type="file"
+        onChange={(event) => {
+          const selected = event.target.files?.[0] ?? null;
+          setFile(selected);
+          setFileType(selected?.name.split(".").pop()?.toLowerCase() ?? "");
+        }}
+      />
+
+      {file ? <FileViewer file={file} fileType={fileType} /> : null}
+    </>
+  );
+}
+```
+
+### Provide a custom fallback
+
+```tsx
+import { FileViewer } from "react-file-viewer-v2";
+
+export function RestrictedPreview({ file }: { file: Blob }) {
+  return (
+    <FileViewer
+      file={file}
+      fileType="pdf"
+      omit={["pdf"]}
+      unsupportedComponent={<div>PDF preview is disabled for this workspace.</div>}
+    />
+  );
+}
+```
+
+

@@ -10,6 +10,12 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+storybook-static
+.storybook-cache
+.cache/storybook
+examples/vite/storybook-static
+examples/vite/.storybook-cache
+examples/vite/dist
 *.local
 
 # Editor directories and files

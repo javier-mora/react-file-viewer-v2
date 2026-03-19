@@ -1,0 +1,9 @@
+<script>
+  if (
+    window.location.pathname.endsWith("/") &&
+    !window.location.search &&
+    !window.location.hash
+  ) {
+    window.location.replace("?path=/docs/overview--docs");
+  }
+</script>
