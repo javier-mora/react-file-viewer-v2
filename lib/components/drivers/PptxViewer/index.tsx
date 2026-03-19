@@ -7,6 +7,7 @@ interface IPptxViewerProps {
     fileBlob: Blob;
     width: number | string;
     height: number | string;
+    theme?: "auto" | "light" | "dark";
 }
 
 export const PptxViewer = (props: IPptxViewerProps) => {
@@ -14,6 +15,7 @@ export const PptxViewer = (props: IPptxViewerProps) => {
     const [isLoading, setIsLoading] = React.useState(true);
     const [slides, setSlides] = React.useState<string[]>([]);
     const [idx, setIdx] = React.useState(0);
+    const [resolvedTheme, setResolvedTheme] = React.useState<"light" | "dark">("light");
 
     const numericSize = React.useMemo(() => {
         const w = typeof props.width === 'number' ? props.width : undefined;
@@ -46,6 +48,49 @@ export const PptxViewer = (props: IPptxViewerProps) => {
         return () => { isMounted = false; };
     }, [props.fileBlob, numericSize.width, numericSize.height]);
 
+    React.useEffect(() => {
+        if (props.theme === "light" || props.theme === "dark") {
+            setResolvedTheme(props.theme);
+            return;
+        }
+
+        const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+        const syncTheme = () => {
+            setResolvedTheme(mediaQuery.matches ? "dark" : "light");
+        };
+
+        syncTheme();
+        mediaQuery.addEventListener("change", syncTheme);
+
+        return () => {
+            mediaQuery.removeEventListener("change", syncTheme);
+        };
+    }, [props.theme]);
+
+    const toolbarStyle = resolvedTheme === "dark"
+        ? {
+            background: "linear-gradient(180deg, #2b3038 0%, #20252c 100%)",
+            color: "#e7ebf0",
+            borderTop: "1px solid #3a4049",
+        }
+        : {
+            background: "linear-gradient(180deg, #f7f8fa 0%, #eef1f4 100%)",
+            color: "#3b4351",
+            borderTop: "1px solid #d7dce3",
+        };
+
+    const capsuleStyle = resolvedTheme === "dark"
+        ? {
+            background: "linear-gradient(180deg, #2b3038 0%, #20252c 100%)",
+            border: "1px solid #3a4049",
+            color: "#e7ebf0",
+        }
+        : {
+            background: "linear-gradient(180deg, #f7f8fa 0%, #eef1f4 100%)",
+            border: "1px solid #d7dce3",
+            color: "#3b4351",
+        };
+
     const goPrev = () => setIdx((v) => Math.max(0, v - 1));
     const goNext = useCallback(() => setIdx((v) => Math.min(slides.length - 1, v + 1)), [slides.length]);
 
@@ -73,10 +118,12 @@ export const PptxViewer = (props: IPptxViewerProps) => {
                 <div id="pg-pptx-viewer-v1" className={styles.viewer}>
                     <div className={styles.stage}
                          dangerouslySetInnerHTML={{ __html: slides[idx] }} />
-                    <div className={styles.navbar}>
-                        <Button label="<" onClick={goPrev} />
-                        <span className={styles.counter}>{idx + 1} / {slides.length}</span>
-                        <Button label=">" onClick={goNext} />
+                    <div className={styles.toolbar} style={toolbarStyle}>
+                        <div className={styles.navbar} style={capsuleStyle}>
+                            <Button label="‹" onClick={goPrev} theme={props.theme} />
+                            <span className={styles.counter}>{idx + 1} of {slides.length}</span>
+                            <Button label="›" onClick={goNext} theme={props.theme} />
+                        </div>
                     </div>
                 </div>
             )}

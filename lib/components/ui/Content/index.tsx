@@ -1,4 +1,5 @@
 import { PropsWithChildren } from "react";
+import styles from "./styles.module.css";
 
 interface IContentProps {
     padding?: string;
@@ -6,7 +7,7 @@ interface IContentProps {
 
 export const Content = (props: PropsWithChildren<IContentProps>) => {
     return (
-        <div>
+        <div className={styles.content}>
             {props.children}
         </div>    
     );

@@ -10,12 +10,28 @@ export const PdfViewer = (props: IPdfViewerProps) => {
     return (
         <Container isLoading={false} hasError={false}>
             <Content>
-                <iframe 
-                    title="pdf"
-                    src={props.filePath} 
-                    width={props.width ?? "100%"}
-                    height={props.height ?? "500px"}
-                />
+                <div
+                    style={{
+                        width: typeof props.width === "number" ? `${props.width}px` : (props.width ?? "100%"),
+                        height: typeof props.height === "number" ? `${props.height}px` : (props.height ?? "100%"),
+                        minWidth: 0,
+                        minHeight: 0,
+                        overflow: "hidden",
+                    }}
+                >
+                    <iframe 
+                        title="pdf"
+                        src={props.filePath}
+                        width="100%"
+                        height="100%"
+                        style={{
+                            display: "block",
+                            border: 0,
+                            width: "100%",
+                            height: "100%",
+                        }}
+                    />
+                </div>
             </Content>
         </Container>
     );

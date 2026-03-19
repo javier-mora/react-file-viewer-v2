@@ -1,56 +1,104 @@
 .container {
     width: 100%;
     height: 100%;
-    background: white;
+    background: #ffffff;
     display: flex;
     flex-direction: column;
+    min-width: 0;
+    min-height: 0;
 }
 
 .sheetView {
     overflow: auto;
-    max-width: 100vw;
     flex: 1 1 auto;
-    max-height: 100%;
+    min-width: 0;
+    min-height: 0;
+    background: #ffffff;
 }
 
 .tabs {
+    --viewer-toolbar-bg: linear-gradient(180deg, #f7f8fa 0%, #eef1f4 100%);
+    --viewer-toolbar-border: #d7dce3;
+    --viewer-button-bg: #ffffff;
+    --viewer-button-bg-hover: #f3f5f7;
+    --viewer-button-border: #c8d0da;
+    --viewer-button-border-hover: #b6c0cb;
+    --viewer-button-color: #2f3743;
+    --viewer-selection-outline: #7ea1d6;
+    --viewer-selection-fill: rgba(126, 161, 214, 0.16);
+    --viewer-selection-header: #e8edf3;
     display: flex;
+    align-items: center;
     gap: 4px;
-    padding: 8px;
-    border-top: 1px solid #e1e4e8;
-    background: #f6f8fa;
-    position: sticky;
-    bottom: 0;
-    max-width: 100vw;
-    min-height: 45px;
+    padding: 6px 10px;
+    border-top: 1px solid var(--viewer-toolbar-border);
+    background: var(--viewer-toolbar-bg);
+    min-height: 40px;
     overflow: auto;
+    flex: 0 0 auto;
+}
+
+.tabs[data-theme="dark"] {
+    --viewer-toolbar-bg: linear-gradient(180deg, #2b3038 0%, #20252c 100%);
+    --viewer-toolbar-border: #3a4049;
+    --viewer-button-bg: #323841;
+    --viewer-button-bg-hover: #3a414b;
+    --viewer-button-border: #4b5561;
+    --viewer-button-border-hover: #5a6674;
+    --viewer-button-color: #eef2f7;
+    --viewer-selection-outline: #8fb0e0;
+    --viewer-selection-fill: rgba(143, 176, 224, 0.18);
+    --viewer-selection-header: #39414c;
+}
+
+@media (prefers-color-scheme: dark) {
+    .tabs[data-theme="auto"] {
+        --viewer-toolbar-bg: linear-gradient(180deg, #2b3038 0%, #20252c 100%);
+        --viewer-toolbar-border: #3a4049;
+        --viewer-button-bg: #323841;
+        --viewer-button-bg-hover: #3a414b;
+        --viewer-button-border: #4b5561;
+        --viewer-button-border-hover: #5a6674;
+        --viewer-button-color: #eef2f7;
+        --viewer-selection-outline: #8fb0e0;
+        --viewer-selection-fill: rgba(143, 176, 224, 0.18);
+        --viewer-selection-header: #39414c;
+    }
 }
 
 .tab {
-    padding: 6px 10px;
-    border: 1px solid #c9d1d9;
-    border-radius: 6px;
-    background: #fff;
+    padding: 0 12px;
+    border: 1px solid var(--viewer-button-border);
+    border-radius: 999px;
+    background: var(--viewer-button-bg);
     cursor: pointer;
-    font-family: Arial, sans-serif;
+    font-family: "Segoe UI", Arial, sans-serif;
     font-size: 12px;
+    font-weight: 600;
+    color: var(--viewer-button-color);
     -webkit-user-select: none;
     user-select: none;
-    height: 30px;
+    height: 28px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.tab:hover {
+    background: var(--viewer-button-bg-hover);
+    border-color: var(--viewer-button-border-hover);
 }
 
 .tab.active {
-    background: #e7f5ff;
-    border-color: #4ea1ff;
+    background: color-mix(in srgb, var(--viewer-button-bg) 70%, var(--viewer-button-color) 8%);
+    border-color: color-mix(in srgb, var(--viewer-button-border) 80%, var(--viewer-button-color) 20%);
+    color: var(--viewer-button-color);
 }
 
-/* Selection styles (global to match generated HTML) */
 :global(.xl) td:global(.sel) {
-    outline: 2px solid #4ea1ff;
+    outline: 2px solid var(--viewer-selection-outline);
     outline-offset: -2px;
-    background-color: rgba(78, 161, 255, 0.12);
+    background-color: var(--viewer-selection-fill);
 }
 
 :global(.xl) th:global(.sel-h) {
-    background: #dbeeff;
+    background: var(--viewer-selection-header);
 }

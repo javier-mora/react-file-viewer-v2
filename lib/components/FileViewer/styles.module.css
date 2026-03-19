@@ -2,10 +2,12 @@
     height: 100%;
     display: flex;
     flex-direction: row;
+    min-width: 0;
 }
 .pgViewer {
     height: 100%; 
     position: relative;
     flex-grow: 2;
+    min-width: 0;
     overflow: auto;
 }

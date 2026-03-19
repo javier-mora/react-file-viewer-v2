@@ -13,14 +13,14 @@ interface IContainerProps {
 export const Container = (props: PropsWithChildren<IContainerProps>) => {
     return (
         <div className={styles.container}>
-            <div>
+            <div className={styles.barRegion}>
                 {React.Children.map(props.children, (child: React.ReactNode, index) => {
                     if (index == 0 && React.isValidElement(child) && child.type === Bar) {
                         return React.cloneElement(child);
                     }
                 })}
             </div>
-            <div>
+            <div className={styles.contentRegion}>
                 {props.isLoading && (
                     <div>
                         <Loading/>

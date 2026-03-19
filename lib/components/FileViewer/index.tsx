@@ -11,11 +11,14 @@ import {
 import styles from './styles.module.css'
 import { Error, Loading } from '../ui';
 
+export type FileViewerTheme = 'auto' | 'light' | 'dark';
+
 interface IFileViewer {
   file: Blob;
   fileType: string;
-  unsupportedComponent?: JSX.Element;
+  unsupportedComponent?: React.ReactElement;
   omit?: string[];
+  theme?: FileViewerTheme;
 }
 
 export const FileViewer = ({
@@ -23,6 +26,7 @@ export const FileViewer = ({
   fileType,
   unsupportedComponent,
   omit,
+  theme = 'auto',
 }: IFileViewer) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [dataUri, setDataUri] = React.useState<string>('');
@@ -48,13 +52,12 @@ export const FileViewer = ({
       try {
         URL.revokeObjectURL(url);
       } catch (err) {
-        // eslint-disable-next-line no-console
         console.warn('react-file-viewer-v2: failed to revokeObjectURL', err);
       }
     };
   }, [file]);
 
-  const Driver = (props: { fileType: string, filePath: string, fileBlob: Blob, width: number | string, height: number | string, omit: string[] }) => {
+  const Driver = (props: { fileType: string, filePath: string, fileBlob: Blob, width: number | string, height: number | string, omit: string[], theme: FileViewerTheme }) => {
     switch (fileType) {
       case 'jpg':
       case 'gif':
@@ -124,6 +127,7 @@ export const FileViewer = ({
             width={measure.width}
             height={measure.height}
             omit={omit ?? []}
+            theme={theme}
           />
         )}
       </div>

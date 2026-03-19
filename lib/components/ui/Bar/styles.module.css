@@ -1,10 +1,36 @@
 .containerBar {
+    --viewer-toolbar-bg: linear-gradient(180deg, #f7f8fa 0%, #eef1f4 100%);
+    --viewer-toolbar-border: #d7dce3;
+    --viewer-toolbar-text: #2f3743;
     width: 100%;
-    height: 50px;
+    min-height: 40px;
+    box-sizing: border-box;
     display: flex;
-    background-color: #151515;
-    color:white;
+    background: var(--viewer-toolbar-bg);
+    color: var(--viewer-toolbar-text);
     justify-content: center;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
+    padding: 4px 10px;
+    border-bottom: 1px solid var(--viewer-toolbar-border);
+}
+
+.containerBar[data-theme="light"] {
+    --viewer-toolbar-bg: linear-gradient(180deg, #f7f8fa 0%, #eef1f4 100%);
+    --viewer-toolbar-border: #d7dce3;
+    --viewer-toolbar-text: #2f3743;
+}
+
+.containerBar[data-theme="dark"] {
+    --viewer-toolbar-bg: linear-gradient(180deg, #2b3038 0%, #20252c 100%);
+    --viewer-toolbar-border: #3a4049;
+    --viewer-toolbar-text: #e7ebf0;
+}
+
+@media (prefers-color-scheme: dark) {
+    .containerBar[data-theme="auto"] {
+        --viewer-toolbar-bg: linear-gradient(180deg, #2b3038 0%, #20252c 100%);
+        --viewer-toolbar-border: #3a4049;
+        --viewer-toolbar-text: #e7ebf0;
+    }
 }

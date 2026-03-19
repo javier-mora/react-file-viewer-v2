@@ -8,6 +8,7 @@ interface IXlsxViewerProps {
     fileBlob: Blob;
     width: number | string;
     height: number | string;
+    theme?: "auto" | "light" | "dark";
 }
 
 export const XlsxViewer = (props: IXlsxViewerProps) => {
@@ -26,7 +27,6 @@ export const XlsxViewer = (props: IXlsxViewerProps) => {
         sheetViewRef.current.focus();
 
         const buttons = Array.from(tabsRef.current.children);
-        // Toggle module-aware active class for tabs
         buttons.forEach((el, i) => el.classList.toggle(styles.active, i === index));
 
         const cleanup = attachSelectionHandlers(sheetViewRef.current);
@@ -88,7 +88,8 @@ export const XlsxViewer = (props: IXlsxViewerProps) => {
             />
             <div
                 ref={tabsRef}
-                id="tabs" 
+                id="tabs"
+                data-theme={props.theme ?? "auto"}
                 className={styles.tabs}
             />
         </div>
