@@ -22,8 +22,7 @@ The public Storybook documentation is published to GitHub Pages from the isolate
 
 - Images: png, jpeg, gif
 - pdf
-- csv
-- tsv
+- Spreadsheets: xlsx, csv, tsv
 - docx
 - xlsx
 - pptx
@@ -57,6 +56,12 @@ export function CsvPreview({ file }: { file: Blob }) {
   return <FileViewer file={file} fileType="csv" csvDelimiter=";" />;
 }
 ```
+
+### CSV and TSV files
+
+CSV and TSV files use the same Excel-like grid as XLSX previews, including column and row headers, fixed headers while scrolling, cell selection, and copy support. Delimiters are detected automatically for comma, semicolon, tab, and pipe-separated files; use `csvDelimiter` when the delimiter is known.
+
+For large files, the CSV viewer renders 500 rows at a time and provides previous/next controls in the sheet toolbar. This keeps large files responsive while preserving the original row numbers.
 
 ## Storybook locally
 
