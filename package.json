@@ -1,10 +1,11 @@
 {
   "name": "react-file-viewer-v2",
   "private": false,
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Extendable file viewer for web",
   "author": "javier-mora",
   "license": "MIT",
+  "funding": "https://github.com/sponsors/javier-mora",
   "type": "module",
   "homepage": "https://javier-mora.github.io/react-file-viewer-v2/",
   "repository": {
@@ -36,19 +37,19 @@
     "@types/react-dom": "^19.2.2",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
+    "@vitejs/plugin-react": "^6.0.4",
     "eslint": "^8.57.1",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.26",
     "glob": "^10.5.0",
     "typescript": "^5.9.3",
-    "vite": "8.0.1",
+    "vite": "^8.1.5",
     "vite-plugin-dts": "4.5.4",
-    "vite-plugin-lib-inject-css": "^2.2.2",
-    "@vitejs/plugin-react": "6.0.1"
+    "vite-plugin-lib-inject-css": "^2.2.2"
   },
   "dependencies": {
-    "@jvmr/pptx-to-html": "1.0.1",
-    "docx-preview": "^0.3.7",
-    "xlsx-to-js": "1.0.5"
+    "@jvmr/pptx-to-html": "^1.1.1",
+    "docx-preview": "^0.4.0",
+    "xlsx-to-js": "^1.0.6"
   }
 }
