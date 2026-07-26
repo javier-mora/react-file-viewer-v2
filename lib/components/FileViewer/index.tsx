@@ -6,7 +6,8 @@ import {
   XlsxViewer,
   VideoViewer,
   UnsupportedViewer,
-  PptxViewer
+  PptxViewer,
+  CsvViewer
 } from '../drivers';
 import styles from './styles.module.css'
 import { Error, Loading } from '../ui';
@@ -19,7 +20,49 @@ interface IFileViewer {
   unsupportedComponent?: React.ReactElement;
   omit?: string[];
   theme?: FileViewerTheme;
+  csvDelimiter?: 'auto' | ',' | ';' | '\t' | string;
 }
+
+interface IFileViewerDriver {
+  fileType: string;
+  filePath: string;
+  fileBlob: Blob;
+  width: number | string;
+  height: number | string;
+  omit: string[];
+  theme: FileViewerTheme;
+  csvDelimiter: 'auto' | ',' | ';' | '\t' | string;
+  unsupportedComponent?: React.ReactElement;
+}
+
+const FileViewerDriver = (props: IFileViewerDriver) => {
+  const unsupported = () => props.unsupportedComponent ?? <UnsupportedViewer />;
+
+  switch (props.fileType) {
+    case 'jpg':
+    case 'jpeg':
+    case 'gif':
+    case 'bmp':
+    case 'png':
+      return props.omit.includes(props.fileType) ? unsupported() : <PhotoViewer {...props} />;
+    case 'pdf':
+      return props.omit.includes('pdf') ? unsupported() : <PdfViewer {...props} />;
+    case 'docx':
+      return props.omit.includes('docx') ? unsupported() : <DocxViewer {...props} />;
+    case 'xlsx':
+      return props.omit.includes('xlsx') ? unsupported() : <XlsxViewer {...props} />;
+    case 'csv':
+    case 'tsv':
+      return props.omit.includes(props.fileType) ? unsupported() : <CsvViewer {...props} />;
+    case 'webm':
+    case 'mp4':
+      return props.omit.includes(props.fileType) ? unsupported() : <VideoViewer {...props} />;
+    case 'pptx':
+      return props.omit.includes('pptx') ? unsupported() : <PptxViewer {...props} />;
+    default:
+      return unsupported();
+  }
+};
 
 export const FileViewer = ({
   file,
@@ -27,7 +70,9 @@ export const FileViewer = ({
   unsupportedComponent,
   omit,
   theme = 'auto',
+  csvDelimiter = 'auto',
 }: IFileViewer) => {
+  const viewerRef = React.useRef<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [dataUri, setDataUri] = React.useState<string>('');
   const [measure, setMeasure] = React.useState({
@@ -36,10 +81,22 @@ export const FileViewer = ({
   })
 
   React.useLayoutEffect(() => {
-    const container = document.getElementById('pg-viewer')
-    const height = container ? container.clientHeight : 0
-    const width = container ? container.clientWidth : 0
-    setMeasure({ height: height, width: width })
+    const container = viewerRef.current;
+    if (!container) return;
+
+    const updateMeasure = () => {
+      const { clientHeight: height, clientWidth: width } = container;
+      setMeasure((current) => (
+        current.height === height && current.width === width
+          ? current
+          : { height, width }
+      ));
+    };
+    updateMeasure();
+
+    const observer = new ResizeObserver(updateMeasure);
+    observer.observe(container);
+    return () => observer.disconnect();
 
   }, []);
 
@@ -57,62 +114,11 @@ export const FileViewer = ({
     };
   }, [file]);
 
-  const Driver = (props: { fileType: string, filePath: string, fileBlob: Blob, width: number | string, height: number | string, omit: string[], theme: FileViewerTheme }) => {
-    switch (fileType) {
-      case 'jpg':
-      case 'gif':
-      case 'bmp':
-      case 'png': {
-        if (props.omit.includes('jpg') || props.omit.includes('gif') || props.omit.includes('bmp') || props.omit.includes('png')) {
-          return unsupportedComponent ?? <UnsupportedViewer />
-        } else {
-          return <PhotoViewer {...props} />
-        }
-      }
-      case 'pdf': {
-        if (props.omit.includes('pdf')) {
-          return unsupportedComponent ?? <UnsupportedViewer />
-        } else {
-          return <PdfViewer {...props} />
-        }
-      }
-      case 'docx': {
-        if (props.omit.includes('docx')) {
-          return unsupportedComponent ?? <UnsupportedViewer />
-        } else {
-          return <DocxViewer {...props} /> 
-        }
-      }
-      case 'xlsx': {
-        if (props.omit.includes('xlsx')) {
-          return unsupportedComponent ?? <UnsupportedViewer />
-        } else {
-          return <XlsxViewer {...props} />  
-        }
-      }
-      case 'webm':
-      case 'mp4': {
-        if (props.omit.includes('webm') || props.omit.includes('mp4')) {
-          return unsupportedComponent ?? <UnsupportedViewer />
-        } else {
-          return <VideoViewer {...props} /> 
-        }
-      }
-      case 'pptx':
-        if (props.omit.includes('pptx')) {
-          return unsupportedComponent ?? <UnsupportedViewer />
-        } else {
-          return <PptxViewer {...props} />  
-        }
-      default: {
-        return unsupportedComponent ?? <UnsupportedViewer />
-      }
-    }
-  }
+  const normalizedFileType = fileType.trim().toLowerCase().replace(/^\./, '');
 
   return (
     <div className={styles.pgContainer}>
-      <div id="pg-viewer" className={styles.pgViewer}>
+      <div ref={viewerRef} className={styles.pgViewer}>
         {isLoading && (
           <Loading/>
         )}
@@ -120,14 +126,16 @@ export const FileViewer = ({
           <Error msg='Error al visualizar archivo'/>
         )}
         {!isLoading && dataUri !== '' && (
-          <Driver
+          <FileViewerDriver
             filePath={dataUri}
             fileBlob={file}
-            fileType={fileType}
+            fileType={normalizedFileType}
             width={measure.width}
             height={measure.height}
             omit={omit ?? []}
             theme={theme}
+            csvDelimiter={csvDelimiter}
+            unsupportedComponent={unsupportedComponent}
           />
         )}
       </div>

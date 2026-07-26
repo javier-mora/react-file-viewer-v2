@@ -13,7 +13,7 @@ import * as FileViewerStories from "./file-viewer.stories";
 ## Overview
 
 `react-file-viewer-v2` is a browser-first file preview component for React applications.
-It accepts a `Blob`, resolves the requested viewer from `fileType`, and renders a focused preview surface for images, PDF files, Office documents, videos, and custom unsupported states.
+It accepts a `Blob`, resolves the requested viewer from `fileType`, and renders a focused preview surface for images, PDF files, spreadsheets, Office documents, videos, and custom unsupported states.
 
 The examples below are intentionally compact.
 They are designed to validate the real integration flow instead of presenting a marketing page inside Storybook docs.
@@ -22,7 +22,7 @@ They are designed to validate the real integration flow instead of presenting a 
 
 ### Interactive preview
 
-Use the built-in image, PDF, or Office samples, then upload a local file to exercise the same API used by a real app.
+Use the built-in image, PDF, CSV, or Office samples, then upload a local file to exercise the same API used by a real app.
 
 <Canvas of={FileViewerStories.InteractivePreview} />
 
@@ -32,9 +32,11 @@ This story renders a generated PDF file through the same `FileViewer` entry poin
 
 <Canvas of={FileViewerStories.PdfSample} />
 
-### Office document samples
+### Spreadsheet and Office document samples
 
-These stories use real bundled `xlsx`, `docx`, and `pptx` files so the corresponding drivers run through the same public API as production integrations.
+These stories use bundled `csv`, `xlsx`, `docx`, and `pptx` files so the corresponding drivers run through the same public API as production integrations.
+
+<Canvas of={FileViewerStories.CsvSample} />
 
 <Canvas of={FileViewerStories.XlsxSample} />
 
@@ -74,7 +76,7 @@ When a file type is disabled, you can provide your own React element instead of 
     </tr>
     <tr>
       <td><code>fileType</code></td>
-      <td>Selects the built-in viewer driver, for example <code>pdf</code>, <code>png</code>, <code>docx</code>, <code>xlsx</code>, <code>pptx</code>, <code>mp4</code>, or <code>webm</code>.</td>
+      <td>Selects the built-in viewer driver, for example <code>pdf</code>, <code>png</code>, <code>csv</code>, <code>tsv</code>, <code>docx</code>, <code>xlsx</code>, <code>pptx</code>, <code>mp4</code>, or <code>webm</code>.</td>
       <td>None</td>
       <td>Not exposed</td>
     </tr>
@@ -89,6 +91,12 @@ When a file type is disabled, you can provide your own React element instead of 
       <td>Disables one or more built-in drivers while keeping the same top-level API.</td>
       <td><code>[]</code></td>
       <td><code>object</code></td>
+    </tr>
+    <tr>
+      <td><code>csvDelimiter</code></td>
+      <td>Controls CSV parsing. Use <code>auto</code> to detect common delimiters, or pass a delimiter such as <code>,</code>, <code>;</code>, or <code>\t</code>.</td>
+      <td><code>auto</code></td>
+      <td><code>text</code></td>
     </tr>
     <tr>
       <td><code>theme</code></td>
@@ -111,6 +119,16 @@ const sample = new Blob(["..."], { type: "application/pdf" });
 
 export function BundledPreview() {
   return <FileViewer file={sample} fileType="pdf" />;
+}
+```
+
+### Preview a CSV with an explicit delimiter
+
+```tsx
+import { FileViewer } from "react-file-viewer-v2";
+
+export function CsvPreview({ file }: { file: Blob }) {
+  return <FileViewer file={file} fileType="csv" csvDelimiter=";" />;
 }
 ```
 

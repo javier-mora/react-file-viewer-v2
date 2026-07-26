@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { renderAsync } from "docx-preview";
+import { Error } from "../../ui";
 
 interface IDocxViewerProps {
     fileBlob: Blob;
@@ -8,12 +9,30 @@ interface IDocxViewerProps {
 }
 
 export const DocxViewer = (props: IDocxViewerProps) => {
+    const containerRef = useRef<HTMLDivElement | null>(null);
+    const [hasError, setHasError] = useState(false);
+
     useEffect(() => {
-        renderAsync(props.fileBlob, document.getElementById("docx-container")!);
+        let isCurrent = true;
+        const container = containerRef.current;
+        if (!container) return;
+
+        container.replaceChildren();
+        setHasError(false);
+        void renderAsync(props.fileBlob, container).catch(() => {
+            if (isCurrent) setHasError(true);
+        });
+
+        return () => {
+            isCurrent = false;
+            container.replaceChildren();
+        };
     }, [props.fileBlob]);
 
+    if (hasError) return <Error msg="No se pudo visualizar el documento." />;
+
     return (
-        <div id="docx-container">
+        <div ref={containerRef}>
         </div>
     );
 };

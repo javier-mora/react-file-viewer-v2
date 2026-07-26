@@ -22,6 +22,8 @@ The public Storybook documentation is published to GitHub Pages from the isolate
 
 - Images: png, jpeg, gif
 - pdf
+- csv
+- tsv
 - docx
 - xlsx
 - pptx
@@ -37,6 +39,7 @@ There is one main React component, `FileViewer`, that takes the following props:
 - `unsupportedComponent` react element [optional]: custom component rendered when the file format is not supported
 - `omit` string[] [optional]: list of built-in drivers to disable
 - `theme` "auto" | "light" | "dark" [optional]: toolbar appearance for supported viewers, defaults to `auto`
+- `csvDelimiter` "auto" | string [optional]: delimiter for CSV files. Defaults to `auto` and detects common delimiters like comma, semicolon, tab, and pipe
 
 ```tsx
 import React from "react";
@@ -44,6 +47,14 @@ import { FileViewer } from "react-file-viewer-v2";
 
 export function Example({ file }: { file: Blob }) {
   return <FileViewer file={file} fileType="pdf" theme="auto" />;
+}
+```
+
+```tsx
+import { FileViewer } from "react-file-viewer-v2";
+
+export function CsvPreview({ file }: { file: Blob }) {
+  return <FileViewer file={file} fileType="csv" csvDelimiter=";" />;
 }
 ```
 
@@ -80,4 +91,3 @@ config.resolve.alias = {
 ## License
 
 MIT - [javier-mora](https://github.com/javier-mora)
-

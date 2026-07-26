@@ -3,7 +3,7 @@ import { html } from "lit";
 import "../react-file-viewer-playground";
 
 type StoryArgs = {
-  defaultExample: "image" | "pdf" | "xlsx" | "docx" | "pptx";
+  defaultExample: "image" | "pdf" | "csv" | "xlsx" | "docx" | "pptx";
   allowUpload: boolean;
   allowExampleSwitch: boolean;
   viewerHeight: number;
@@ -20,7 +20,7 @@ const meta: Meta<StoryArgs> = {
   argTypes: {
     defaultExample: {
       control: "inline-radio",
-      options: ["image", "pdf", "xlsx", "docx", "pptx"],
+      options: ["image", "pdf", "csv", "xlsx", "docx", "pptx"],
     },
     viewerHeight: {
       control: { type: "range", min: 320, max: 720, step: 20 },
@@ -85,6 +85,19 @@ export const XlsxSample: Story = {
   name: "XLSX sample",
   args: {
     defaultExample: "xlsx",
+    allowUpload: false,
+    allowExampleSwitch: false,
+    viewerHeight: 420,
+    omit: [],
+    fallbackTitle: "This preview type is intentionally disabled for the current example.",
+    theme: "auto",
+  },
+};
+
+export const CsvSample: Story = {
+  name: "CSV sample",
+  args: {
+    defaultExample: "csv",
     allowUpload: false,
     allowExampleSwitch: false,
     viewerHeight: 420,

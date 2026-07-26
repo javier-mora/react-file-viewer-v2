@@ -39,7 +39,7 @@ export const PptxViewer = (props: IPptxViewerProps) => {
                 setSlides(s);
                 setIdx(0);
             } catch (e) {
-                setSlides([]);
+                if (isMounted) setSlides([]);
             } finally {
                 if (isMounted) setIsLoading(false);
             }

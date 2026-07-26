@@ -3,7 +3,7 @@ import React from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { FileViewer } from "../../../dist/main.js";
 
-type DemoExample = "image" | "pdf" | "xlsx" | "docx" | "pptx";
+type DemoExample = "image" | "pdf" | "csv" | "xlsx" | "docx" | "pptx";
 
 type DemoTheme = "auto" | "light" | "dark";
 
@@ -145,6 +145,14 @@ const sampleSvg = `
 </svg>
 `;
 
+const sampleCsv = [
+  "Region;Product;Units;Revenue",
+  "North;Starter kit;124;18600",
+  "South;Team license;68;34000",
+  "West;Enterprise plan;17;42500",
+  "\"East, coastal\";Support add-on;39;9750",
+].join("\n");
+
 function escapePdfText(value: string) {
   return value.replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
 }
@@ -195,6 +203,14 @@ async function createSampleFile(example: DemoExample): Promise<FileState> {
       file: createSamplePdf(),
       fileType: "pdf",
       label: "Bundled PDF sample",
+    };
+  }
+
+  if (example === "csv") {
+    return {
+      file: new Blob([sampleCsv], { type: "text/csv" }),
+      fileType: "csv",
+      label: "Bundled CSV sample",
     };
   }
 
@@ -293,6 +309,7 @@ function DemoApp({
               {[
                 { value: "image", label: "Image" },
                 { value: "pdf", label: "PDF" },
+                { value: "csv", label: "CSV" },
                 { value: "xlsx", label: "XLSX" },
                 { value: "docx", label: "DOCX" },
                 { value: "pptx", label: "PPTX" },
@@ -318,7 +335,7 @@ function DemoApp({
             Upload a local file
             <input
               type="file"
-              accept=".png,.jpg,.jpeg,.gif,.bmp,.pdf,.docx,.xlsx,.pptx,.webm,.mp4"
+              accept=".png,.jpg,.jpeg,.gif,.bmp,.pdf,.csv,.tsv,.docx,.xlsx,.pptx,.webm,.mp4"
               onChange={onUpload}
               style={{ display: "block", marginTop: "6px" }}
             />

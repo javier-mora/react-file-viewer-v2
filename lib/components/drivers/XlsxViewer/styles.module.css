@@ -1,22 +1,4 @@
 .container {
-    width: 100%;
-    height: 100%;
-    background: #ffffff;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    min-height: 0;
-}
-
-.sheetView {
-    overflow: auto;
-    flex: 1 1 auto;
-    min-width: 0;
-    min-height: 0;
-    background: #ffffff;
-}
-
-.tabs {
     --viewer-toolbar-bg: linear-gradient(180deg, #f7f8fa 0%, #eef1f4 100%);
     --viewer-toolbar-border: #d7dce3;
     --viewer-button-bg: #ffffff;
@@ -27,18 +9,16 @@
     --viewer-selection-outline: #7ea1d6;
     --viewer-selection-fill: rgba(126, 161, 214, 0.16);
     --viewer-selection-header: #e8edf3;
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
     display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 6px 10px;
-    border-top: 1px solid var(--viewer-toolbar-border);
-    background: var(--viewer-toolbar-bg);
-    min-height: 40px;
-    overflow: auto;
-    flex: 0 0 auto;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
 }
 
-.tabs[data-theme="dark"] {
+.container[data-theme="dark"] {
     --viewer-toolbar-bg: linear-gradient(180deg, #2b3038 0%, #20252c 100%);
     --viewer-toolbar-border: #3a4049;
     --viewer-button-bg: #323841;
@@ -52,7 +32,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    .tabs[data-theme="auto"] {
+    .container[data-theme="auto"] {
         --viewer-toolbar-bg: linear-gradient(180deg, #2b3038 0%, #20252c 100%);
         --viewer-toolbar-border: #3a4049;
         --viewer-button-bg: #323841;
@@ -64,6 +44,26 @@
         --viewer-selection-fill: rgba(143, 176, 224, 0.18);
         --viewer-selection-header: #39414c;
     }
+}
+
+.sheetView {
+    overflow: auto;
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    background: #ffffff;
+}
+
+.tabs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-top: 1px solid var(--viewer-toolbar-border);
+    background: var(--viewer-toolbar-bg);
+    min-height: 40px;
+    overflow: auto;
+    flex: 0 0 auto;
 }
 
 .tab {

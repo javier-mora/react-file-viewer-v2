@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Workbook, XlsxParser } from "xlsx-to-js";
 import { attachSelectionHandlers } from "./utils";
+import { Error } from "../../ui";
 
 import styles from './styles.module.css'
 
@@ -18,6 +19,7 @@ export const XlsxViewer = (props: IXlsxViewerProps) => {
     const [isLoading, setIsLoading] = useState(true);
     const [parser, setParser] = useState<XlsxParser | null>(null);
     const [workbook, setWorkbook] = useState<Workbook | null>(null);
+    const [hasError, setHasError] = useState(false);
 
     const renderSheet = useCallback((index: number) => {
         if (!parser || !workbook || !sheetViewRef.current || !tabsRef.current) return;
@@ -34,22 +36,34 @@ export const XlsxViewer = (props: IXlsxViewerProps) => {
     }, [parser, workbook]);
 
     useEffect(() => {
+        let isCurrent = true;
         const getData = async () => {
             setIsLoading(true);
-            const buffer = await props.fileBlob.arrayBuffer();
-            const p = new XlsxParser();
-            const wb = await p.readFile(buffer, {
-                dense: true,
-                styles: true,
-                drawings: true,
-                skipHiddenRows: true
-            });
-
-            setParser(p);
-            setWorkbook(wb);
-            setIsLoading(false);
+            setHasError(false);
+            try {
+                const buffer = await props.fileBlob.arrayBuffer();
+                const p = new XlsxParser();
+                const wb = await p.readFile(buffer, {
+                    dense: true,
+                    styles: true,
+                    drawings: true,
+                    skipHiddenRows: true
+                });
+                if (!isCurrent) return;
+                setParser(p);
+                setWorkbook(wb);
+            } catch {
+                if (isCurrent) {
+                    setParser(null);
+                    setWorkbook(null);
+                    setHasError(true);
+                }
+            } finally {
+                if (isCurrent) setIsLoading(false);
+            }
         };
-        getData();
+        void getData();
+        return () => { isCurrent = false; };
     }, [props.fileBlob]);
 
     useEffect(() => {
@@ -79,8 +93,14 @@ export const XlsxViewer = (props: IXlsxViewerProps) => {
         };
     }, [workbook, renderSheet, isLoading]);
 
+    if (hasError) return <Error msg="No se pudo visualizar la hoja de cálculo." />;
+
     return (
-        <div id="pg-xlsx-viewer-v1" className={styles.container}>
+        <div
+            id="pg-xlsx-viewer-v1"
+            className={styles.container}
+            data-theme={props.theme ?? "auto"}
+        >
             <div
                 ref={sheetViewRef}
                 id="sheetView"
@@ -89,7 +109,6 @@ export const XlsxViewer = (props: IXlsxViewerProps) => {
             <div
                 ref={tabsRef}
                 id="tabs"
-                data-theme={props.theme ?? "auto"}
                 className={styles.tabs}
             />
         </div>
