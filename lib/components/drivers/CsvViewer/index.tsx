@@ -19,6 +19,24 @@ interface ParsedCsv {
 }
 
 const delimiterCandidates = [",", ";", "\t", "|"];
+const CSV_PAGE_SIZE = 500;
+
+const spreadsheetStyles = `
+<style>
+.xlwb { font-family: Arial, sans-serif; color: #222; }
+.xl-sheet { margin: 12px 0; }
+.xl { border-collapse: collapse; table-layout: fixed; border: 1px solid #d0d7de; }
+.xl thead th { position: sticky; top: 0; background: #f6f8fa; z-index: 1; }
+.xl th.xl-row { position: sticky; left: 0; background: #f6f8fa; z-index: 1; }
+.xl th, .xl td { border: 1px solid #d0d7de; padding: 4px 6px; white-space: pre; box-sizing: border-box; }
+.xl td, .xl th { overflow: visible; }
+.xl th { text-align: center; font-weight: 600; font-size: 12px; color: #57606a; }
+.xl td { background: #fff; font-size: 13px; }
+.xl .xl-corner { background: #f6f8fa; width: 36px; min-width: 36px; }
+.xl .xl-col { width: 96px; min-width: 64px; }
+.xl th.xl-row { width: 36px; min-width: 36px; }
+.xl-wrap { position: relative; display: inline-block; }
+</style>`;
 
 function getColumnName(index: number) {
     let name = "";
@@ -133,11 +151,11 @@ function parseCsv(text: string, delimiter: CsvDelimiter | undefined, fileType: s
     };
 }
 
-function renderSheetHtml(rows: string[][]) {
+function renderSheetHtml(rows: string[][], startRow = 0) {
     const columnCount = Math.max(1, ...rows.map((row) => row.length));
     const normalizedRows = rows.length > 0 ? rows : [[""]];
 
-    let html = '<table class="xl"><thead><tr><th></th>';
+    let html = `${spreadsheetStyles}<div class="xlwb"><div class="xl-sheet"><div class="xl-wrap"><table class="xl"><thead><tr><th class="xl-corner"></th>`;
     for (let col = 1; col <= columnCount; col += 1) {
         html += `<th class="xl-col" data-col="${col}">${getColumnName(col)}</th>`;
     }
@@ -145,15 +163,16 @@ function renderSheetHtml(rows: string[][]) {
 
     normalizedRows.forEach((row, rowIndex) => {
         const rowNumber = rowIndex + 1;
-        html += `<tr><th class="xl-row" data-row="${rowNumber}">${rowNumber}</th>`;
+        const displayRowNumber = startRow + rowNumber;
+        html += `<tr><th class="xl-row" data-row="${rowNumber}">${displayRowNumber}</th>`;
         for (let col = 1; col <= columnCount; col += 1) {
             const ref = `${getColumnName(col)}${rowNumber}`;
-            html += `<td data-ref="${ref}">${escapeHtml(row[col - 1] ?? "")}</td>`;
+            html += `<td class="xl-cell" data-ref="${ref}">${escapeHtml(row[col - 1] ?? "")}</td>`;
         }
         html += "</tr>";
     });
 
-    html += "</tbody></table>";
+    html += "</tbody></table></div></div></div>";
     return html;
 }
 
@@ -169,11 +188,17 @@ export const CsvViewer = (props: ICsvViewerProps) => {
     const tabsRef = useRef<HTMLDivElement | null>(null);
     const [parsedCsv, setParsedCsv] = useState<ParsedCsv | null>(null);
     const [hasError, setHasError] = useState(false);
+    const [pageIndex, setPageIndex] = useState(0);
+
+    const pageCount = parsedCsv ? Math.max(1, Math.ceil(parsedCsv.rows.length / CSV_PAGE_SIZE)) : 1;
+    const currentPage = Math.min(pageIndex, pageCount - 1);
 
     const renderSheet = useCallback(() => {
         if (!parsedCsv || !sheetViewRef.current || !tabsRef.current) return;
 
-        sheetViewRef.current.innerHTML = renderSheetHtml(parsedCsv.rows);
+        const startRow = currentPage * CSV_PAGE_SIZE;
+        const pageRows = parsedCsv.rows.slice(startRow, startRow + CSV_PAGE_SIZE);
+        sheetViewRef.current.innerHTML = renderSheetHtml(pageRows, startRow);
         sheetViewRef.current.setAttribute("tabindex", "0");
         sheetViewRef.current.focus();
 
@@ -182,7 +207,7 @@ export const CsvViewer = (props: ICsvViewerProps) => {
 
         const cleanup = attachSelectionHandlers(sheetViewRef.current);
         return cleanup;
-    }, [parsedCsv]);
+    }, [currentPage, parsedCsv]);
 
     useEffect(() => {
         let isMounted = true;
@@ -194,6 +219,7 @@ export const CsvViewer = (props: ICsvViewerProps) => {
                 const nextParsedCsv = parseCsv(text, props.csvDelimiter, props.fileType);
                 if (!isMounted) return;
                 setParsedCsv(nextParsedCsv);
+                setPageIndex(0);
             } catch {
                 if (isMounted) {
                     setParsedCsv(null);
@@ -214,21 +240,48 @@ export const CsvViewer = (props: ICsvViewerProps) => {
 
         const tabsEl = tabsRef.current;
         tabsEl.innerHTML = "";
-        const btn = document.createElement("button");
-        btn.className = styles.tab;
-        btn.textContent = `${props.fileType.toUpperCase()} (${getDelimiterLabel(parsedCsv.delimiter)})`;
-        btn.addEventListener("click", (event) => {
-            event.preventDefault();
-            renderSheet();
-        });
-        tabsEl.appendChild(btn);
+        const createButton = (label: string, onClick?: () => void) => {
+            const btn = document.createElement("button");
+            btn.className = styles.tab;
+            btn.type = "button";
+            btn.textContent = label;
+            if (onClick) {
+                btn.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    onClick();
+                });
+            } else {
+                btn.disabled = true;
+            }
+            return btn;
+        };
+
+        const startRow = currentPage * CSV_PAGE_SIZE + 1;
+        const endRow = Math.min((currentPage + 1) * CSV_PAGE_SIZE, parsedCsv.rows.length);
+        const formatLabel = `${props.fileType.toUpperCase()} (${getDelimiterLabel(parsedCsv.delimiter)})`;
+
+        const formatButton = createButton(formatLabel);
+        formatButton.classList.add(styles.active);
+        tabsEl.appendChild(formatButton);
+
+        if (pageCount > 1) {
+            tabsEl.appendChild(createButton("‹", currentPage > 0 ? () => setPageIndex(currentPage - 1) : undefined));
+            tabsEl.appendChild(createButton(`Rows ${startRow}-${endRow} of ${parsedCsv.rows.length}`));
+            tabsEl.appendChild(createButton("›", currentPage < pageCount - 1 ? () => setPageIndex(currentPage + 1) : undefined));
+        }
 
         const cleanup = renderSheet();
         return () => {
             if (cleanup) cleanup();
             tabsEl.innerHTML = "";
         };
-    }, [parsedCsv, props.fileType, renderSheet]);
+    }, [currentPage, pageCount, parsedCsv, props.fileType, renderSheet]);
+
+    useEffect(() => {
+        if (pageIndex >= pageCount) {
+            setPageIndex(pageCount - 1);
+        }
+    }, [pageCount, pageIndex]);
 
     if (hasError) return <Error msg="No se pudo visualizar el archivo delimitado." />;
 

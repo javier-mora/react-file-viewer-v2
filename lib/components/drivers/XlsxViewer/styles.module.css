@@ -87,6 +87,15 @@
     border-color: var(--viewer-button-border-hover);
 }
 
+.tab:disabled {
+    cursor: default;
+    opacity: 0.78;
+}
+
+.tab:disabled:not(.active) {
+    background: transparent;
+}
+
 .tab.active {
     background: color-mix(in srgb, var(--viewer-button-bg) 70%, var(--viewer-button-color) 8%);
     border-color: color-mix(in srgb, var(--viewer-button-border) 80%, var(--viewer-button-color) 20%);
